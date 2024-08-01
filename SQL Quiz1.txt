@@ -1,30 +1,30 @@
 --練習2
-CREATE TABLE "STUDENT"."Q_VILLAGES"
-( "SERIAL" CHAR(4 CHAR) primary key, 
-  "TOWN" NVARCHAR2(10), 
-  "VILLAGE" NVARCHAR2(10), 
-  "ROAD" NVARCHAR2(20), 
-  "TEL" CHAR(10 CHAR)
+create table "STUDENT"."Q_VILLAGES"
+( "SERIAL" char(4 char) primary key, 
+  "TOWN" nvarchar2(10), 
+  "VILLAGE" nvarchar2(10), 
+  "ROAD" nvarchar2(20), 
+  "TEL" char(10 char)
 );
 
-CREATE TABLE "STUDENT"."Q_POLICES" 
-( "PL_NO" CHAR(4 CHAR) primary key, 
-  "PL_NAME" NVARCHAR2(10), 
-  "RESP_TOWN" NVARCHAR2(10), 
-  "PL_ADDRESS" NVARCHAR2(20), 
-  "TEL" CHAR(10 CHAR)
+create table "STUDENT"."Q_POLICES" 
+( "PL_NO" char(4 char) primary key, 
+  "PL_NAME" nvarchar2(10), 
+  "RESP_TOWN" nvarchar2(10), 
+  "PL_ADDRESS" nvarchar2(20), 
+  "TEL" char(10 char)
 );
 
-CREATE TABLE "STUDENT"."Q_FACILITIES" 
-( "FAC_NO" CHAR(4 CHAR) primary key, 
-  "SERIAL" CHAR(4 CHAR), 
-  "PL_NO" CHAR(4 CHAR), 
-  "FAC_ADDRESS" NVARCHAR2(20), 
-  "ACCOM" INT,
-  "BASEMENT" INT,
-  "BUILDING" NVARCHAR2(10)
+create table "STUDENT"."Q_FACILITIES" 
+( "FAC_NO" char(4 char) primary key, 
+  "SERIAL" char(4 char), 
+  "PL_NO" char(4 char), 
+  "FAC_ADDRESS" nvarchar2(20), 
+  "ACCOM" int,
+  "BASEMENT" int,
+  "BUILDING" nvarchar2(10)
 );
-COMMIT;
+commit;
 
 
 --練習3
@@ -91,63 +91,85 @@ alter table Q_FACILITIES
 
 
 --4.1
-SELECT PL_NAME as 轄管分局,
+select distinct
+       PL_NAME as 轄管分局,
        TEL as 分局連絡電話
-FROM Q_POLICES PL
-LEFT JOIN Q_FACILITIES FAC on FAC.PL_NO = PL.PL_NO
-WHERE FAC.ACCOM > 1000;
+from Q_POLICES PL
+left join Q_FACILITIES FAC on FAC.PL_NO = PL.PL_NO
+where FAC.ACCOM > 1000;
 
 
 --4.2
-SELECT PL.PL_NAME as 轄管分局,
+select PL.PL_NAME as 轄管分局,
        PL.TEL as 分局連絡電話,
-       COUNT(PL.PL_NO) as 轄管分局數量
-FROM Q_POLICES PL
-LEFT JOIN Q_FACILITIES FAC on FAC.PL_NO = PL.PL_NO
-WHERE FAC.ACCOM > 1000
-GROUP BY PL.PL_NAME, PL.TEL;
+       COUNT(FAC.ACCOM) as 大於1000人設施數量
+from Q_POLICES PL
+left join Q_FACILITIES FAC on FAC.PL_NO = PL.PL_NO
+where FAC.ACCOM > 1000
+Group By PL.PL_NAME, PL.TEL;
 
 
 --4.3 
-SELECT PL.PL_NAME as 轄管分局,
+select PL.PL_NAME as 轄管分局,
        PL.TEL as 分局連絡電話,
        COUNT(PL.PL_NO) as 轄管分局數量,
-       fac.fac_address as 避難設施地址,
-       fac.building as 類型
-FROM Q_POLICES PL
-LEFT JOIN Q_FACILITIES FAC on FAC.PL_NO = PL.PL_NO
-WHERE FAC.ACCOM > 1000
-GROUP BY FAC.FAC_ADDRESS, PL.PL_NAME, PL.TEL, fac.building;
+       FAC.FAC_ADDRESS as 避難設施地址,
+       FAC.BUILDING as 類型
+from Q_POLICES PL
+left join Q_FACILITIES FAC on FAC.PL_NO = PL.PL_NO
+where FAC.ACCOM > 1000
+group by FAC.FAC_ADDRESS, PL.PL_NAME, PL.TEL, fac.building;
 
 
 --4.4
-SELECT vil.town as 村里別,
-       fac.fac_address as 避難設施地址,
-       fac.accom as 容人數量,
-       pl.pl_name as 轄管分局,
-       pl.tel as 分局連絡電話
-FROM Q_FACILITIES FAC
-LEFT JOIN q_villages vil on fac.serial = vil.serial
-LEFT JOIN q_polices pl on fac.pl_no = pl.pl_no
-WHERE fac.fac_address LIKE '%中%';
+select VIL.TOWN as 村里別,
+       FAC.FAC_ADDRESS as 避難設施地址,
+       FAC.ACCOM as 容人數量,
+       PL.PL_NAME as 轄管分局,
+       PL.TEL as 分局連絡電話
+from Q_FACILITIES FAC
+left join Q_VILLAGES vil on FAC.SERIAL = VIL.SERIAL
+left join Q_POLICES pl on FAC.PL_NO = PL.PL_NO
+where FAC.FAC_ADDRESS like '%中%';
 
 
 --4.5
-SELECT vil.town as 村里別,
-       vil.road as 村里辦公室位置,
-       fac.fac_address as 避難設施地址,
-       fac.accom as 容人數量
-FROM Q_FACILITIES FAC
-LEFT JOIN q_villages vil on fac.serial = vil.serial
-WHERE fac.building = '公寓' or fac.building = '大樓';
+select VIL.TOWN as 村里別,
+       VIL.ROAD as 村里辦公室位置,
+       FAC.FAC_ADDRESS as 避難設施地址,
+       FAC.ACCOM as 容人數量
+from Q_FACILITIES FAC
+left join Q_VILLAGES VIL on FAC.SERIAL = VIL.SERIAL
+where FAC.BUILDING = '公寓' or FAC.BUILDING = '大樓';
 
 
 --5.1
 update Q_FACILITIES
- set accom = '5000'
+ set ACCOM = '5000'
   where FAC_ADDRESS = '竹南鎮和平街79號';
   
   
 --5.2
 delete from Q_FACILITIES
-where accom < 1000;
+where ACCOM < 1000;
+
+
+--5.2a in case of my mistakes
+insert into Q_FACILITIES 
+values ('F001', 'C001', 'M001', '竹南鎮中埔街20號', '100', '1', '公寓') ;
+insert into Q_FACILITIES 
+values ('F004', 'C004', 'M001', '後龍鎮中華路1498號', '32', '1', '公共設施') ;
+insert into Q_FACILITIES 
+values ('F005', 'C005', 'M002', '苗栗市米市街80號', '106', '1', '公寓') ;
+insert into Q_FACILITIES 
+values ('F006', 'C005', 'M002', '苗栗市光復路117號', '26', '1', '公寓') ;
+insert into Q_FACILITIES 
+values ('F008', 'C005', 'M002', '苗栗市大同路53號', '128', '1', '大樓') ;
+insert into Q_FACILITIES 
+values ('F009', 'C006', 'M003', '頭份市民族里和平路102號', '353', '1', '公共設施') ;
+insert into Q_FACILITIES 
+values ('F010', 'C007', 'M003', '頭份市忠孝忠孝一路69號', '501', '1', '私營單位') ;
+insert into Q_FACILITIES 
+values ('F011', 'C008', 'M003', '頭份市信義里中正路65號', '194', '1', '公寓') ;
+insert into Q_FACILITIES 
+values ('F012', 'C008', 'M003', '頭份市信義里中正路116號', '78', '1', '私營單位') ;
