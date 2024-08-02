@@ -1,0 +1,179 @@
+--練習2 (""removed, CHAR usually in byte)
+create table STUDENT.Q_VILLAGES
+( SERIAL varchar(6) primary key, 
+  TOWN nvarchar2(10), 
+  VILLAGE nvarchar2(10), 
+  ROAD nvarchar2(100), 
+  TEL char(10 byte)
+);
+
+create table STUDENT.Q_POLICES 
+( PL_NO varchar(6) primary key, 
+  PL_NAME nvarchar2(10), 
+  RESP_TOWN nvarchar2(10), 
+  PL_ADDRESS nvarchar2(100), 
+  TEL char(10 byte)
+);
+
+create table STUDENT.Q_FACILITIES 
+( FAC_NO varchar(6), primary key, 
+  SERIAL varchar(6), 
+  PL_NO varchar(6),  
+  FAC_ADDRESS nvarchar2(100), 
+  ACCOM int,
+  BASEMENT int,
+  BUILDING nvarchar2(10)
+);
+commit;
+
+
+--練習3
+insert into Q_VILLAGES 
+ values ('C001', '竹南鎮', '大埔里', '公義路1035號','037-581072') ;
+insert into Q_VILLAGES 
+ values ('C002', '竹南鎮', '竹南里', '中山路103號','037-472735') ;
+insert into Q_VILLAGES 
+ values ('C003', '竹南鎮', '山佳里', '國光街14號','037-614186') ;
+insert into Q_VILLAGES 
+ values ('C004', '後龍鎮', '埔頂里', '中興路136-1號','037-724839') ;
+insert into Q_VILLAGES 
+ values ('C005', '苗栗市', '綠苗里', '中正路766號','037-333240') ;
+insert into Q_VILLAGES 
+ values ('C006', '頭份市', '民族里', '民族路96號','037-660001') ;
+insert into Q_VILLAGES 
+ values ('C007', '頭份市', '忠孝里', '光大街82號','037-661145') ;
+insert into Q_VILLAGES 
+ values ('C008', '頭份市', '信義里', '信義路53巷1號','037-616072') ;
+commit;
+
+insert into Q_POLICES 
+ values ('M001', '竹南分局', '竹南鎮', '竹南鎮民族街72號', '037-474796') ;
+insert into Q_POLICES 
+ values ('M001', '竹南分局', '後龍鎮', '竹南鎮民族街72號', '037-474796') ;
+insert into Q_POLICES 
+ values ('M002', '苗栗分局', '苗栗市', '苗栗市金鳳街109號', '037-320059') ;
+insert into Q_POLICES 
+ values ('M003', '頭份分局', '頭份市', '頭份市中興路503號', '037-663004') ;
+commit;
+
+insert into Q_FACILITIES 
+ values ('F001', 'C001', 'M001', '竹南鎮中埔街20號', '100', '1', '公寓') ;
+insert into Q_FACILITIES 
+ values ('F002', 'C002', 'M001', '竹南鎮和平街79號', '3142', '1', '大樓') ;
+insert into Q_FACILITIES 
+ values ('F003', 'C003', 'M001', '竹南鎮龍山路三段142號', '1072', '1', '大樓') ;
+insert into Q_FACILITIES 
+ values ('F004', 'C004', 'M001', '後龍鎮中華路1498號', '32', '1', '公共設施') ;
+insert into Q_FACILITIES 
+ values ('F005', 'C005', 'M002', '苗栗市米市街80號', '106', '1', '公寓') ;
+insert into Q_FACILITIES 
+ values ('F006', 'C005', 'M002', '苗栗市光復路117號', '26', '1', '公寓') ;
+insert into Q_FACILITIES 
+ values ('F007', 'C005', 'M002', '苗栗市博愛街109號', '2038', '2', '大樓') ;
+insert into Q_FACILITIES
+ values ('F008', 'C005', 'M002', '苗栗市大同路53號', '128', '1', '大樓') ;
+insert into Q_FACILITIES 
+ values ('F009', 'C006', 'M003', '頭份市民族里和平路102號', '353', '1', '公共設施') ;
+insert into Q_FACILITIES 
+ values ('F010', 'C007', 'M003', '頭份市忠孝忠孝一路69號', '501', '1', '私營單位') ;
+insert into Q_FACILITIES 
+ values ('F011', 'C008', 'M003', '頭份市信義里中正路65號', '194', '1', '公寓') ;
+insert into Q_FACILITIES 
+ values ('F012', 'C008', 'M003', '頭份市信義里中正路116號', '78', '1', '私營單位') ;
+commit;
+
+
+-- Just adding some foreign key
+alter table Q_FACILITIES
+ add foreign key (SERIAL) references Q_VILLAGES (SERIAL);
+alter table Q_FACILITIES
+ add foreign key (PL_NO) references Q_POLICES (PL_NO);
+
+
+--4.1 (+SCHEMA at from and join, +TABLE at select, indentation)
+select distinct
+       PL.PL_NAME as 轄管分局,
+       PL.TEL as 分局連絡電話
+ from STUDENT.Q_POLICES PL
+ left join STUDENT.Q_FACILITIES FAC on FAC.PL_NO = PL.PL_NO
+ where FAC.ACCOM > 1000;
+
+
+--4.2 (+SCHEMA at from and join, +TABLE at select, indentation)
+--    (merge the data in group by; partition could do separation)
+--https://medium.com/%E6%95%B8%E6%93%9A%E4%B8%8D%E6%AD%A2-not-only-data/%E5%A6%82%E4%BD%95%E5%8D%81%E5%88%86%E9%90%98%E5%85%A7%E5%BF%AB%E9%80%9F%E4%B8%8A%E6%89%8B%E8%88%87%E4%BD%BF%E7%94%A8-window-function-e24e0a7e75ba
+select PL.PL_NAME as 轄管分局,
+       PL.TEL as 分局連絡電話,
+       count(FAC.ACCOM) over(partition by FAC.ACCOM) as 大於1000人設施數量       
+ from STUDENT.Q_POLICES PL
+ left join STUDENT.Q_FACILITIES FAC on FAC.PL_NO = PL.PL_NO
+ where FAC.ACCOM > 1000;
+
+
+
+--4.3 (+SCHEMA at from and join, +TABLE at select, indentation)
+select PL.PL_NAME as 轄管分局,
+       PL.TEL as 分局連絡電話,
+       COUNT(PL.PL_NO) as 轄管分局數量,
+       FAC.FAC_ADDRESS as 避難設施地址,
+       FAC.BUILDING as 類型
+ from STUDENT.Q_POLICES PL
+ left join STUDENT.Q_FACILITIES FAC on FAC.PL_NO = PL.PL_NO
+ where FAC.ACCOM > 1000
+ group by FAC.FAC_ADDRESS, PL.PL_NAME, PL.TEL, FAC.BUILDING;
+
+
+--4.4 (+SCHEMA at from and join, +TABLE at select, indentation)
+select VIL.TOWN as 村里別,
+       FAC.FAC_ADDRESS as 避難設施地址,
+       FAC.ACCOM as 容人數量,
+       PL.PL_NAME as 轄管分局,
+       PL.TEL as 分局連絡電話
+ from STUDENT.Q_FACILITIES FAC
+ left join STUDENT.Q_VILLAGES VIL on FAC.SERIAL = VIL.SERIAL
+ left join STUDENT.Q_POLICES PL on FAC.PL_NO = PL.PL_NO
+ where FAC.FAC_ADDRESS like '%中%';
+
+
+--4.5 (+SCHEMA at from and join, +TABLE at select, indentation)
+--    (in and or are the same here)
+select VIL.TOWN as 村里別,
+       VIL.ROAD as 村里辦公室位置,
+       FAC.FAC_ADDRESS as 避難設施地址,
+       FAC.ACCOM as 容人數量
+ from STUDENT.Q_FACILITIES FAC
+ left join STUDENT.Q_VILLAGES VIL on FAC.SERIAL = VIL.SERIAL
+ where FAC.BUILDING in ('公寓', '大樓');
+
+
+--5.1
+update STUDENT.Q_FACILITIES
+ set ACCOM = 5000
+  where FAC_ADDRESS = '竹南鎮和平街79號';
+  
+  
+--5.2
+delete from STUDENT.Q_FACILITIES
+ where FAACCOM < 1000;
+
+
+
+--5.2a in case of my mistakes
+insert into Q_FACILITIES 
+values ('F001', 'C001', 'M001', '竹南鎮中埔街20號', '100', '1', '公寓') ;
+insert into Q_FACILITIES 
+values ('F004', 'C004', 'M001', '後龍鎮中華路1498號', '32', '1', '公共設施') ;
+insert into Q_FACILITIES 
+values ('F005', 'C005', 'M002', '苗栗市米市街80號', '106', '1', '公寓') ;
+insert into Q_FACILITIES 
+values ('F006', 'C005', 'M002', '苗栗市光復路117號', '26', '1', '公寓') ;
+insert into Q_FACILITIES 
+values ('F008', 'C005', 'M002', '苗栗市大同路53號', '128', '1', '大樓') ;
+insert into Q_FACILITIES 
+values ('F009', 'C006', 'M003', '頭份市民族里和平路102號', '353', '1', '公共設施') ;
+insert into Q_FACILITIES 
+values ('F010', 'C007', 'M003', '頭份市忠孝忠孝一路69號', '501', '1', '私營單位') ;
+insert into Q_FACILITIES 
+values ('F011', 'C008', 'M003', '頭份市信義里中正路65號', '194', '1', '公寓') ;
+insert into Q_FACILITIES 
+values ('F012', 'C008', 'M003', '頭份市信義里中正路116號', '78', '1', '私營單位') ;
