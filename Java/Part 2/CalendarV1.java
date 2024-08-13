@@ -11,7 +11,7 @@ public class Calendar {
 			int year = 2024;
 			System.out.print("輸入介於 1－12 的整數m: ");
 			int month = input.nextInt();
-			System.out.println(year + "年" + month + "月");
+			System.out.println("       " + year + "年" + month + "月");
 			display(year, month);
 		}
 	}

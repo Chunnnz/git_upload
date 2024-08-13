@@ -139,10 +139,10 @@ public class CarsDb {
 				PreparedStatement pstmt = conn.prepareStatement(INSERT_CARS_SQL);) {
 			try {
 				conn.setAutoCommit(false);
-				pstmt.setString(1, (String) mapI.get("MANUFACTURER"));
-				pstmt.setString(2, (String) mapI.get("TYPE"));
-				pstmt.setInt(3, (Integer) mapI.get("MIN_PRICE"));
-				pstmt.setInt(4, (Integer) mapI.get("PRICE"));
+				pstmt.setString(3, (String) mapI.get("MANUFACTURER"));
+				pstmt.setString(4, (String) mapI.get("TYPE"));
+				pstmt.setInt(1, (Integer) mapI.get("MIN_PRICE"));
+				pstmt.setInt(2, (Integer) mapI.get("PRICE"));
 				pstmt.executeUpdate();
 				conn.commit();
 				System.out.println("新增成功");
