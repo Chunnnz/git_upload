@@ -186,10 +186,10 @@ public class CarsDb {
 		try (Connection conn = DriverManager.getConnection(CONN_URL, "student", "student123456");) {
 			try (PreparedStatement pstmt = conn.prepareStatement(UPDATE_CARS_SQL);) {
 				conn.setAutoCommit(false);
-				pstmt.setString(1, (String) mapU.get("MANUFACTURER"));
-				pstmt.setString(2, (String) mapU.get("TYPE"));
-				pstmt.setInt(3, (Integer) mapU.get("MIN_PRICE"));
-				pstmt.setInt(4, (Integer) mapU.get("PRICE"));
+				pstmt.setString(3, (String) mapU.get("MANUFACTURER"));
+				pstmt.setString(4, (String) mapU.get("TYPE"));
+				pstmt.setInt(1, (Integer) mapU.get("MIN_PRICE"));
+				pstmt.setInt(2, (Integer) mapU.get("PRICE"));
 				pstmt.executeUpdate();
 				conn.commit();
 				System.out.println("更新成功");
