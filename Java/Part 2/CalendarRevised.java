@@ -11,7 +11,7 @@ public class Calendar {
 			int year = LocalDate.now().getYear();
 			System.out.print("輸入介於 1－12 的整數m: ");
 			int month = input.nextInt();
-			System.out.println("       " + year + "年" + month + "月");
+			System.out.println(String.format("%6s%4s年%2s\n", " ", year, month));
 			display(year, month);
 		}
 	}
