@@ -100,17 +100,17 @@ public class Cars {
 			System.out.print(sb1);
 			sb1.setLength(0);
 
-			sb2.append(String.format("%-12s", "小計")).append(String.format("%-10s", " "))
-					.append(String.format("%10s", subttlMPrice)).append(" ").append(String.format("%9s", subttlPrice));
+			sb2.append(String.format("%-20s", "小計")).append(String.format("\t%9s", subttlMPrice)).append(" ")
+					.append(String.format("%9s", subttlPrice));
 			System.out.println(sb2);
-			sb2.setLength(0); 
+			sb2.setLength(0);
 
 			ttlMPrice = subttlMPrice.add(ttlMPrice);
 			ttlPrice = subttlPrice.add(ttlPrice);
 		}
 
-		sb3.append(String.format("%-12s", "總計")).append(String.format("%-10s", " "))
-				.append(String.format("%10s", ttlMPrice)).append(" ").append(String.format("%9s", ttlPrice));
+		sb3.append(String.format("%-20s", "總計")).append(String.format("\t%9s", ttlMPrice)).append(" ")
+				.append(String.format("%9s", ttlPrice));
 		System.out.println(sb3);
 
 		try (OutputStreamWriter osw = new OutputStreamWriter(new FileOutputStream(urlOut), "UTF-8");) {
