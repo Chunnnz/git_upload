@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Map</title>
+
+    <script type="text/javascript" src="HashMap.js"></script>
+    <script type="text/javaScript">
+        window.onload = function () {
+            const map = new HashMap();            
+            const iptKey = document.getElementById('iptKey');
+            const iptValue = document.getElementById('iptValue');
+            const resultDiv = document.getElementById('result');
+            
+            document.getElementById('btnPut').onclick = function () {
+                const key =  iptKey.value;
+                const value = iptValue.value;                             
+                
+                if(key.trim() === ''){
+                    alert('KEY cannot be empty.');
+                }
+                else{
+                    if (!map.contains(key)){
+                        resultDiv.innerHTML = '';
+                        map.put(key,value);
+                        const keys = map.keys();                       
+                        for (let i = 0; i < keys.length; i++) {
+                            const key = keys[i];
+                            const value = map.get(key);
+                            resultDiv.innerHTML += '　　'+key + '：' + value + '<br/>';
+                        }  
+                    }
+                    else{
+                        alert('KEY already exist.');
+                        return;
+                    }                                         
+                    }                    
+                }
+               
+            document.getElementById('btnClear').onclick = function () {   
+                map.clear();   
+                resultDiv.innerHTML = '';
+                iptKey.value = '';
+                iptValue.value = '';   
+                };
+            };
+        </script>
+</head>
+
+<body>
+    <form>
+        <br>
+        KEY <input type="text" id="iptKey" /><br>
+        <br>
+        VALUE <input type="text" id="iptValue" /><br>
+        <br>
+        <hr width=400 align=left>
+        <br>
+        <button type="button" id="btnPut"> PUT </button>
+        <button type="button" id="btnClear"> CLEAR </button>
+        <br>
+        <br>
+        <hr width=400 align=left>
+    </form>
+    <br>
+    【RESULT】
+    <div id="result"></div>
+
+</body>
+
+</html>

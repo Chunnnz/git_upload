@@ -130,6 +130,7 @@ public class Cars {
 				bw.write(sbCVS.toString());
 				bw.newLine();
 			}
+			bw.close();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
