@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Table</title>
+
+    <script>
+        window.onload = function () {
+            const iptManuf = document.getElementById('manuf');
+            const iptType = document.getElementById('type');
+            const iptMinPrice = document.getElementById('minPrice');
+            const iptPrice = document.getElementById('price');
+            const resultDiv = document.getElementById('result');
+
+            function addRow(manuf, type, minPrice, price) {
+                const newRow = document.createElement('tr');
+
+                const radioCell = document.createElement('td');
+                const delRadio = document.createElement('input');
+                delRadio.setAttribute('type', 'radio');
+                delRadio.setAttribute('name', 'delete');
+                delRadio.onclick = function () {
+                    iptManuf.value = manuf;
+                    iptType.value = type;
+                    iptMinPrice.value = minPrice;
+                    iptPrice.value = price;
+                };
+                radioCell.appendChild(delRadio);
+                newRow.appendChild(radioCell);
+
+                const seqCell = document.createElement('td');
+                seqCell.textContent = resultDiv.rows.length + 1;
+                newRow.appendChild(seqCell);
+
+                newRow.insertCell().textContent = manuf;
+                // Optimized- in createElement way:
+                // const manufCell = document.createElement('td');
+                // manufCell.textContent = manuf;
+                // newRow.appendChild(manufCell);
+                newRow.insertCell().textContent = type;
+                newRow.insertCell().textContent = minPrice;
+                newRow.insertCell().textContent = price;
+
+                const btnCell = document.createElement('td');
+                const delBtn = document.createElement('button');
+                delBtn.textContent = '刪除';
+                delBtn.onclick = function () {
+                    newRow.remove();
+                    const rows = resultDiv.getElementsByTagName('tr');
+                    for (let i = 0; i < rows.length; i++) {
+                        rows[i].cells[1].textContent = i + 1;
+                    };
+                    clearInput();
+                };
+                btnCell.appendChild(delBtn);
+                newRow.appendChild(btnCell);
+
+                resultDiv.appendChild(newRow);
+            }
+
+            const clearInput = function () {
+                iptManuf.value = '';
+                iptType.value = '';
+                iptMinPrice.value = '';
+                iptPrice.value = '';
+            }
+
+            document.getElementById('btnAdd').onclick = function () {
+                if (!iptManuf.value.trim() || !iptType.value.trim()) {
+                    alert('Manufacturer or Type cannot be empty.');
+                    return;
+                }
+                addRow(iptManuf.value, iptType.value, iptMinPrice.value, iptPrice.value);
+                clearInput();
+            }
+
+            document.getElementById('btnRev').onclick = function () {
+                const selRadio = document.querySelector('input[name="delete"]:checked');
+
+                if (!selRadio) {
+                    alert('None were selected.');
+                    return;
+                }
+                const selRow = selRadio.parentNode.parentNode;
+                if (!iptManuf.value.trim() || !iptType.value.trim()) {
+                    alert('Manufacturer or Type cannot be empty.');
+                    return;
+                }
+                selRow.cells[2].textContent = iptManuf.value;
+                selRow.cells[3].textContent = iptType.value;
+                selRow.cells[4].textContent = iptMinPrice.value;
+                selRow.cells[5].textContent = iptPrice.value;
+                clearInput();
+            }
+
+            document.getElementById('btnClear').onclick = function () {
+                resultDiv.innerHTML = '';
+                clearInput();
+            }
+        }
+    </script>
+
+</head>
+
+<body>
+
+    <table table border="1" width=550 cellpadding=10 style=" border-collapse: collapse;">
+        <tr>
+            <td align="center">製造商</td>
+            <td align="center"><input type="text" id="manuf"></td>
+            <td align="center">類別</td>
+            <td align="center"><input type="text" id="type"></td>
+        </tr>
+        <tr>
+            <td align="center">底價</td>
+            <td align="center"><input type="text" id="minPrice"></td>
+            <td align="center">售價</td>
+            <td align="center"><input type="text" id="price"></td>
+        </tr>
+        <tr>
+            <td align="center" colspan="4"><button id="btnAdd">新增</button><button id="btnRev">修改</button><button
+                    id="btnClear">清空</button>
+            </td>
+        </tr>
+    </table>
+
+    <br>
+    <table table border="1" width=450 cellpadding=10 style=" border-collapse: collapse;">
+        <tr>
+            <td align="center">　　</td>
+            <td align="center">序號</td>
+            <td align="center">製造商</td>
+            <td align="center">類別</td>
+            <td align="center">底價</td>
+            <td align="center">售價</td>
+            <td align="center">　　</td>
+        </tr>
+        <tbody id="result"></tbody>
+    </table>
+
+
+</body>
+
+</html>
